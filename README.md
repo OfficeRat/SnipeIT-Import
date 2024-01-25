@@ -1,52 +1,70 @@
-# Docs 
 
-## Todo
-Rename assets vis de ikke har riktig navn
+# SNIPE-IT Import
 
+### Description
 
-| Api-kall      | Forklaring                                                                                                         
-|---------------|--------------------------------------------------------------------------------------------------------------------
-| Devices       | Henter enheter fra Azure AD                                                                                        
-| mangedDevices | Henter enheter fra Endpoint                                                                                        
-| users         | Henter alle brukerene i gruppen Intune - Alle Ansatte                                                              
-| user_Devices  | Henter alle enhetene koblet til en ansatt (Dette gjørs får å komme rund "Enrolled by" og "Primary user" problemet) 
-| snipe_get     | Henter alt fra et endpoint det du spesifiserer. f.eks snipe_get('Hardware')                                        
-| snipe_post    | Legger til på noe på de enpointet du spsifiserer. f.eks snipe_get('Hardware')                                      
-| snipe_patch   | Oppdaere noen på enpointet du har spsifisert. feks snipe_patch('Hardware')       
+This project automates the import and update process of device information into a Snipe-IT asset management system using data from an external API. It is designed to run periodically with a cron job, ensuring that the Snipe-IT system stays up-to-date with the latest device information.
+### Table of Contents
 
-| Database Funksjoner | Forklaring
-|---------------------|-----------------------------------------------------
-| Create_db()         | Lager SQLite databasen buffer.sqlite og lager Tables
-| use_db(statment, args*)| funksjon for å kunne bruke predefinerte SQL queries
+* [Installation](#Installation)
+* [Usage](#Usage)
+* [Configuration](#Configuration)
+* [Cron Job](#Cron-Job)
+* [Dependencies](#Dependencies)
 
-| Database Tables     | Forklaring
-|---------------------|------------------------------------------------------
-| manufacturer        | For manufacturer navn og id fra Snipe-IT
-| model               | For model navn og fra Snipe-IT
-| devices             | For enheter fra Intune
-| snipe_users         | Brukernavn og id fra Snipe-IT
-| intune_users        | UPN fra intune og id fra Snipe-IT
+### <a name="Installation"></a>Installation
 
-| Perdefinerte SQL queries| Bruksanvisning
-|-------------------------|--------------------------------------------------
-| create manufacturer     | name, manufacturer_id
-| create model            | name, model_id, manufacturer, manufacturer_id
-| create device           | device, serial, model, model_id, manufacturer, manufacturer_id
-| create snipe_users      | device, username, user_id
-| create intune_users     | device, username, user_id
-| get manufacturer        | name
-| get model               | model
-| get device              | device_id
-| get device count        | 
-| get count               | table
-| get snipe user          | device
-| get intune user         | device
-| delete                  | 
+1. Clone the repository:
+```bash
+git clone https://github.com/your-username/project-name.git
+cd project-name
+```
 
-| Filer                 | Forklaring                                                            |
-------------------------|-----------------------------------------------------------------------|
-| main.py               | Hoved script hvor alt blir hentet inn og kjørt                        |
-| api_calls.py          | Alle api kallene som skal bli gjort i en egen fil                     |
-| db.py                 | Alt med databasen gjøres via her                                      |
+2. Install the required dependencies:
 
+```bash
+pip install -r requirements.txt
+```
+3. Set up the configuration file:
 
+```bash
+cp .env.example .env
+```
+
+Update the values in the .env file with your specific configurations.
+
+### <a name="Usage"></a>Usage
+
+Run the main script to start the import and update process:
+
+```bash
+python main.py
+```
+The script will fetch device information from microsft graph api, process the data, and update the Snipe-IT asset management system accordingly.
+
+### <a name="Configuration"></a>Configuration
+
+Configure the application by modifying the .env file. This file contains environment variables necessary for the proper functioning of the script. Update the following variables:
+
+* SNIPE_API_KEY: API key for authenticating with the Snipe-IT API.
+* MICROSOFT_CLIENT_ID: Client ID for authenticating with the Microsoft API.
+* MICROSOFT_CLIENT_SECRET: Client secret for authenticating with the Microsoft API.
+* SNIPE_URL: URL of the Snipe-IT instance.
+* SNIPE_API_URL: Snipe-IT API URL.
+* MICROSOFT_URL: Microsoft API URL.
+* SLACK_URL: Slack webhook URL for sending notifications.
+* DEVICE_PREFIX: Prefixes of supported devices, separated by commas.
+
+### <a name="Cron-Job"></a>Cron Job
+
+To set up a cron job for periodic execution, add the following line to your crontab file:
+
+```bash
+0 0 * * * /path/to/python /path/to/project-name/main.py
+```
+This example runs the script every day at midnight. Adjust the timing as needed.
+
+### <a name="Dependencies"></a>Dependencies
+
+    requests: HTTP library for making API requests.
+    dotenv: Loads environment variables from a file.

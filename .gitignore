@@ -1,0 +1,8 @@
+*.sqlite
+psudocode
+db_test.py
+.env
+check_bad_id.py
+__pycache__
+snipe-sync.log
+*.sh
